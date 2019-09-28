@@ -51,13 +51,14 @@ def main():
     app['websockets'] = set()
     loader = jinja2.FileSystemLoader('templates')
     jinja_env = aiohttp_jinja2.setup(app, loader=loader)
+    os.makedirs('logs', exist_ok=True)
     for name in os.listdir('sources'):
         if name.startswith('_'):
             continue
         if name.endswith('.py'):
             name = name[:-3]
         m = importlib.import_module('sources.' + name)
-        app['sources'].append(m.Source())
+        app['sources'].append(m.Source(name))
     app.add_routes([
         web.get('/', handle),
         web.get('/socket', wshandle),

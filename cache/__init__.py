@@ -24,3 +24,16 @@ class Cache:
         if len(self._queue) > self.size:
             x = self._queue.pop()
             self._items.remove(x)
+
+    def load(self, path):
+        try:
+            fp = open(path, 'r')
+        except FileNotFoundError:
+            return
+        for line in fp:
+            self.add(line.strip())
+
+    def save(self, path):
+        fp = open(path, 'w')
+        fp.write('\n'.join(self._queue))
+        fp.close()

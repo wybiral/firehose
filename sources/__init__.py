@@ -26,9 +26,11 @@ class RSSSource(BaseSource):
     parser_config = {}
     cache_size = 500
 
-    def __init__(self):
+    def __init__(self, module):
+        self.logfile = 'logs/%s.txt' % module
         self.cache = Cache(size=self.cache_size)
         self.parser = RSSParser(config=self.parser_config)
+        self.cache.load(self.logfile)
 
     async def update(self, queue):
         headers = {'User-Agent': 'Firehose'}
@@ -37,6 +39,7 @@ class RSSSource(BaseSource):
                 async with s.get(url) as r:
                     text = await r.text()
                     await self._update_text(queue, text)
+        self.cache.save(self.logfile)
 
     async def _update_text(self, queue, text):
         for x in self.parser.parse(text):
