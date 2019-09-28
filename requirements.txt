@@ -1,0 +1,5 @@
+aiohttp==3.6.0
+aiohttp-jinja2==1.1.2
+aiojobs==0.2.2
+feedparser==5.2.1
+Jinja2==2.10.1

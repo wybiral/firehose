@@ -1,0 +1,64 @@
+* {
+    background: inherit;
+    border: none;
+    box-sizing: border-box;
+    color: inherit;
+    font-size: inherit;
+    font-weight: inherit;
+    margin: 0;
+    outline: none;
+    padding: 0;
+    text-decoration: none;
+}
+
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    background: #ddd;
+    padding: 0.5em;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+main {
+    max-width: 600px;
+    margin: 0.5em auto;
+    display: flex;
+    flex-direction: column-reverse;
+}
+
+article {
+    background: #fff;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
+    padding: 0.5em;
+    animation: fadein 1s;
+}
+
+@keyframes fadein {
+    from {opacity: 0} to {opacity: 1}
+}
+
+article img {
+    max-width: 100px;
+    float: left;
+    vertical-align: top;
+    margin-right: 0.5em;
+}
+
+article + article {
+    margin-bottom: 0.5em;
+}
+
+article a.title {
+    font-size: 120%;
+}
+
+article div.source {
+    color: #555;
+}
+
+article p {
+    margin-top: 0.5em;
+    color: #111;
+}
