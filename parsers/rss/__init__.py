@@ -1,4 +1,5 @@
 from bs4 import BeautifulSoup
+import datetime
 import feedparser
 import time
 
@@ -31,8 +32,13 @@ class RSSParser:
             thumb = extract_thumb(entry)
             if thumb:
                 update['thumb'] = thumb
-            date = entry['published_parsed']
-            update['date'] = time.strftime('%Y-%m-%d %H:%M:%S', date)
+            if 'published_parsed' in entry:
+                date = entry['published_parsed']
+                date = time.strftime('%Y-%m-%d %H:%M:%S', date)
+            else:
+                date = datetime.datetime.now()
+                date = date.strftime('%Y-%m-%d %H:%M:%S')
+            update['date'] = date
             yield update
 
 
