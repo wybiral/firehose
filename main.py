@@ -33,7 +33,7 @@ async def handle(req):
 
 async def wshandle(req):
     print('/socket')
-    ws = web.WebSocketResponse()
+    ws = web.WebSocketResponse(heartbeat=5)
     await ws.prepare(req)
     req.app['websockets'].add(ws)
     async for msg in ws:
@@ -49,7 +49,7 @@ def main():
     host = '127.0.0.1'
     port = 8000
     app = web.Application()
-    app['queue'] = asyncio.Queue()
+    app['queue'] = asyncio.Queue(maxsize=10)
     app['sources'] = []
     app['websockets'] = set()
     loader = jinja2.FileSystemLoader('templates')
