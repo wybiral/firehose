@@ -69,6 +69,8 @@ def extract_thumb(entry):
     # no media attachment or thumbnail? look for <img> in body...
     soup = BeautifulSoup(entry['summary'], 'html.parser')
     img = soup.find('img')
-    if img:
+    # Routers has a weird image link that gets mistaken for a thumbnail
+    # for now, filtering "yIl2AUoC8zA" is a hacky workaround
+    if img and 'yIl2AUoC8zA' not in img['src']:
         return img['src']
     return None
