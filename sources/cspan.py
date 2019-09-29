@@ -16,6 +16,7 @@ class Source(BaseSource):
 
     async def update(self, queue):
         headers = {'User-Agent': 'Firehose'}
+        self.updated = False
         async with aiohttp.ClientSession(headers=headers) as s:
             url = 'https://www.c-span.org/search/'
             query = 'searchtype=Videos&sort=Most+Recent+Airing&ajax&page=1'
@@ -25,7 +26,8 @@ class Source(BaseSource):
                 videos = soup.find_all('li', {'class': 'onevid'})
                 for video in reversed(videos):
                     await self._update_video(queue, video)
-        self.cache.save(self.logfile)
+        if self.updated:
+            self.cache.save(self.logfile)
 
     async def _update_video(self, queue, video):
         text = video.find('div', {'class': 'text'})
@@ -52,5 +54,6 @@ class Source(BaseSource):
             'name': self.name,
             'url': self.url,
         }
+        self.updated = True
         self.cache.add(url)
         await queue.put(x)

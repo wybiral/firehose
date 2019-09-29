@@ -16,13 +16,16 @@ async def pump_firehose(app):
     while True:
         if len(app['websockets']) == 0:
             # don't bother if no clients
-            await asyncio.sleep(5)
+            await asyncio.sleep(1)
             continue
         x = await queue.get()
         j = json.dumps(x)
         for ws in app['websockets']:
-            await ws.send_str(j)
-        await asyncio.sleep(0.25)
+            try:
+                await ws.send_str(j)
+            except:
+                pass
+        await asyncio.sleep(0.1)
 
 async def handle(req):
     print('/')

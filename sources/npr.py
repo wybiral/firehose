@@ -24,13 +24,15 @@ class Source(BaseSource):
 
     async def update(self, queue):
         headers = {'User-Agent': 'Firehose'}
+        self.updated = False
         async with aiohttp.ClientSession(headers=headers) as s:
             for url in self.feeds:
                 async with s.get(url) as r:
                     json = await r.json()
                     for item in json['items']:
                         await self._update_item(queue, item)
-        self.cache.save(self.logfile)
+        if self.updated:
+            self.cache.save(self.logfile)
 
     async def _update_item(self, queue, item):
         url = item['url']
@@ -51,5 +53,6 @@ class Source(BaseSource):
             'name': self.name,
             'url': self.url,
         }
+        self.updated = True
         self.cache.add(url)
         await queue.put(x)
