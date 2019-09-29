@@ -47,13 +47,16 @@ def clean_html(raw):
 
 def extract_body(entry):
     texts = []
-    texts.append(entry['summary'])
+    if 'summary' in entry:
+        texts.append(entry['summary'])
     # some publications put the whole article so we search for the true summary
     # by looking for the shortest text/html content if multiple exist.
     if 'content' in entry:
         for content in entry['content']:
             if content['type'] == 'text/html':
                 texts.append(content['value'])
+    if len(texts) == 0:
+        return ''
     texts.sort(key=lambda x: len(x))
     return texts[0]
 
@@ -67,6 +70,8 @@ def extract_thumb(entry):
         imgs = [x for x in entry['links'] if 'image' in x['type']]
         if len(imgs) > 0:
             return imgs[0]['href']
+    if 'summary' not in entry:
+        return None
     # no media attachment or thumbnail? look for <img> in body...
     soup = BeautifulSoup(entry['summary'], 'html.parser')
     img = soup.find('img')
