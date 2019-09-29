@@ -61,7 +61,8 @@ def extract_thumb(entry):
     if 'media_thumbnail' in entry and len(entry['media_thumbnail']) > 0:
         return entry['media_thumbnail'][0]['url']
     if 'media_content' in entry and len(entry['media_content']) > 0:
-        return entry['media_content'][0]['url']
+        if 'url' in entry['media_content'][0]:
+            return entry['media_content'][0]['url']
     if 'links' in entry and len(entry['links']) > 0:
         imgs = [x for x in entry['links'] if 'image' in x['type']]
         if len(imgs) > 0:
