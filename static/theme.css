@@ -58,6 +58,10 @@ article div.source {
     color: #555;
 }
 
+article div.date {
+    color: #777;
+}
+
 article p {
     margin-top: 0.5em;
     color: #111;

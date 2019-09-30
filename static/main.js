@@ -28,6 +28,10 @@ function createUpdate(data) {
     }
     sourceLink.innerText = sourceName;
     source.appendChild(sourceLink);
+    const date = document.createElement('div');
+    header.appendChild(date);
+    date.className = 'date';
+    date.innerText = data.date.split(' ')[0];
     const clear = document.createElement('div');
     clear.style.clear = 'both';
     header.appendChild(clear);
