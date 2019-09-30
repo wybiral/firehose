@@ -36,14 +36,18 @@ class RSSSource(BaseSource):
         headers = {'User-Agent': 'Firehose'}
         self.updated = False
         async with aiohttp.ClientSession(headers=headers) as s:
-            for url in self.feeds:
+            for x in self.feeds:
+                if isinstance(x, tuple):
+                    url, category = x
+                else:
+                    url, category = (x, None)
                 async with s.get(url) as r:
                     text = await r.text()
-                    await self._update_text(queue, text)
+                    await self._update_text(queue, text, category)
         if self.updated:
             self.cache.save(self.logfile)
 
-    async def _update_text(self, queue, text):
+    async def _update_text(self, queue, text, category):
         for x in self.parser.parse(text):
             url = x['url']
             if url in self.cache:
@@ -54,4 +58,6 @@ class RSSSource(BaseSource):
                 'name': self.name,
                 'url': self.url,
             }
+            if category is not None:
+                x['source']['category'] = category
             await queue.put(x)
