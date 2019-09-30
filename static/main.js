@@ -5,19 +5,25 @@ function createUpdate(data) {
     const article = document.createElement('article');
     const header = document.createElement('header');
     if (data.thumb) {
-        const thumb = document.createElement('img');
-        thumb.src = data.thumb;
+        const thumb = document.createElement('div');
         header.appendChild(thumb);
+        thumb.className = 'thumb'
+        const img = document.createElement('img');
+        thumb.appendChild(img);
+        img.src = data.thumb;
     }
     article.appendChild(header);
+    const info = document.createElement('div');
+    header.appendChild(info);
+    info.className = 'info';
     const title = document.createElement('a');
+    info.appendChild(title);
     title.className = 'title';
     title.href = data.url;
     title.target = '_blank';
     title.innerText = data.title;
-    header.appendChild(title);
     const source = document.createElement('div');
-    header.appendChild(source);
+    info.appendChild(source);
     source.className = 'source';
     const sourceLink = document.createElement('a');
     sourceLink.href = data.source.url;
@@ -29,7 +35,7 @@ function createUpdate(data) {
     sourceLink.innerText = sourceName;
     source.appendChild(sourceLink);
     const date = document.createElement('div');
-    header.appendChild(date);
+    info.appendChild(date);
     date.className = 'date';
     date.innerText = data.date.split(' ')[0];
     const clear = document.createElement('div');

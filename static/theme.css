@@ -39,26 +39,40 @@ article {
     from {opacity: 0} to {opacity: 1}
 }
 
-article img {
+article + article {
+    margin-bottom: 0.5em;
+}
+
+article header {
+    display: flex;
+}
+
+article header .thumb {
+    width: 100px;
+    min-width: 100px;
     max-width: 100px;
-    float: left;
-    vertical-align: top;
     margin-right: 0.5em;
 }
 
-article + article {
-    margin-bottom: 0.5em;
+article header img {
+    width: 100%;
+    height: auto;
+    vertical-align: top;
+}
+
+article header .info {
+    flex-grow: 1;
 }
 
 article a.title {
     font-size: 120%;
 }
 
-article div.source {
+article .source {
     color: #555;
 }
 
-article div.date {
+article .date {
     color: #777;
 }
 
