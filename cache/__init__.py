@@ -14,9 +14,11 @@ class Cache:
         self._queue = deque()
 
     def __contains__(self, x):
+        ''' Check for x in cache. '''
         return x in self._items
 
     def add(self, x):
+        ''' Add x to cache, kicking out oldest item if full. '''
         if x in self._items:
             return
         self._items.add(x)
@@ -26,6 +28,7 @@ class Cache:
             self._items.remove(x)
 
     def load(self, path):
+        ''' Load cache items from file path. '''
         try:
             fp = open(path, 'r')
         except FileNotFoundError:
@@ -34,6 +37,7 @@ class Cache:
             self.add(line.strip())
 
     def save(self, path):
+        ''' Save cache items to file path. '''
         fp = open(path, 'w')
         fp.write('\n'.join(self._queue))
         fp.close()

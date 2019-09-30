@@ -11,6 +11,7 @@ class RSSParser:
         self.config = config
 
     def parse(self, x):
+        ''' Parse feed items from x text, return item generator. '''
         # feedparser will perform a request from these strings
         if x[:3] in ('htt', 'ftp', 'fil', 'fee'):
             return None
@@ -25,6 +26,8 @@ class RSSParser:
             body = extract_body(entry)
             body = BeautifulSoup(body, 'html.parser')
             if first_p:
+                # 'first-p' is a config option to only take the first <p>
+                # element from the body HTML. This is pretty common.
                 p = body.find('p')
                 if p is not None:
                     body = p
@@ -43,9 +46,11 @@ class RSSParser:
 
 
 def clean_html(raw):
+    ''' Clean up HTML from raw text, extracting only the text. '''
     return BeautifulSoup(raw, 'html.parser').get_text().strip()
 
 def extract_body(entry):
+    ''' Extract body from RSS item entry. '''
     texts = []
     if 'summary' in entry:
         texts.append(entry['summary'])
@@ -61,6 +66,11 @@ def extract_body(entry):
     return texts[0]
 
 def extract_thumb(entry):
+    ''' Extract thumbnail URL from RSS item entry.
+        Different publishers put the thumbnail in different places in the feed
+        so this approach checks a number of possibilities, returning None of no
+        thumbnail is found.
+    '''
     if 'media_thumbnail' in entry and len(entry['media_thumbnail']) > 0:
         return entry['media_thumbnail'][0]['url']
     if 'media_content' in entry and len(entry['media_content']) > 0:
@@ -75,7 +85,7 @@ def extract_thumb(entry):
     # no media attachment or thumbnail? look for <img> in body...
     soup = BeautifulSoup(entry['summary'], 'html.parser')
     img = soup.find('img')
-    # Routers has a weird image link that gets mistaken for a thumbnail
+    # Routers News has a weird image link that gets mistaken for a thumbnail
     # for now, filtering "yIl2AUoC8zA" is a hacky workaround
     if img and 'yIl2AUoC8zA' not in img['src']:
         return img['src']

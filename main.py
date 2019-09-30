@@ -9,6 +9,9 @@ import os
 from sources.axios import Source
 
 async def pump_firehose(app):
+    ''' Spawn all stream source jobs and pump the app['queue'] stream out to
+        all app['websockets']
+    '''
     queue = app['queue']
     jobs = await aiojobs.create_scheduler()
     for s in app['sources']:
@@ -52,16 +55,21 @@ def main():
     app['queue'] = asyncio.Queue(maxsize=10)
     app['sources'] = []
     app['websockets'] = set()
+    # setup template env
     loader = jinja2.FileSystemLoader('templates')
     jinja_env = aiohttp_jinja2.setup(app, loader=loader)
+    # create cache log path
     os.makedirs('logs', exist_ok=True)
+    # instantiate all Source objects from sources module
     for name in os.listdir('sources'):
         if name.startswith('_'):
             continue
         if name.endswith('.py'):
             name = name[:-3]
         m = importlib.import_module('sources.' + name)
-        app['sources'].append(m.Source(name))
+        if hasattr(m, 'Source'):
+            app['sources'].append(m.Source(name))
+    # web app routes
     app.add_routes([
         web.get('/', handle),
         web.get('/socket', wshandle),
@@ -70,6 +78,7 @@ def main():
     app.on_startup.append(start_background_tasks)
     web.run_app(app, host=host, port=port)
     print('\nshutting down...')
+
 
 if __name__ == '__main__':
     main()
