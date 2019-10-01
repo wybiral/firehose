@@ -12,3 +12,11 @@ class Source(RSSSource):
         ('http://feeds.reuters.com/Reuters/worldNews', 'world'),
         'http://feeds.reuters.com/reuters/topNews',
     ]
+
+    def map(self, x):
+        parts = x['url'].split('?', 1)
+        url = parts[0]
+        _, id = url.rsplit('-', 1)
+        x['url'] = url
+        x['id'] = id
+        return x
