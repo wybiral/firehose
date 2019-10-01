@@ -21,6 +21,10 @@ class RSSParser:
         for entry in reversed(entries):
             url = entry['link']
             update = {}
+            if 'id' in entry:
+                update['id'] = entry['id']
+            else:
+                update['id'] = url
             update['url'] = url
             update['title'] = clean_html(entry['title'])
             body = extract_body(entry)

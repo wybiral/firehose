@@ -32,6 +32,9 @@ class RSSSource(BaseSource):
         self.parser = RSSParser(config=self.parser_config)
         self.cache.load(self.logfile)
 
+    def map(self, x):
+        return x
+
     async def update(self, queue):
         headers = {'User-Agent': 'Firehose'}
         self.updated = False
@@ -48,16 +51,20 @@ class RSSSource(BaseSource):
             self.cache.save(self.logfile)
 
     async def _update_text(self, queue, text, category):
+        source = {
+            'name': self.name,
+            'url': self.url,
+        }
+        if category is not None:
+            source['category'] = category
         for x in self.parser.parse(text):
-            url = x['url']
-            if url in self.cache:
+            x['source'] = source
+            x = self.map(x)
+            if x is None:
+                continue
+            id = x['id']
+            if id in self.cache:
                 continue
             self.updated = True
-            self.cache.add(url)
-            x['source'] = {
-                'name': self.name,
-                'url': self.url,
-            }
-            if category is not None:
-                x['source']['category'] = category
+            self.cache.add(id)
             await queue.put(x)
