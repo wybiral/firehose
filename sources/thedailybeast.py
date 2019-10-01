@@ -10,3 +10,10 @@ class Source(RSSSource):
         'https://feeds.thedailybeast.com/rss/articles',
     ]
     parser_config = {'first-p': True}
+
+    def map(self, x):
+        parts = x['url'].split('?', 1)
+        url = parts[0]
+        x['url'] = url
+        x['id'] = url
+        return x
