@@ -1,2 +1,2 @@
 # firehose
-News aggregate system
+Real-time news aggregate system.
