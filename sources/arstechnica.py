@@ -11,4 +11,9 @@ class Source(RSSSource):
         ('http://feeds.arstechnica.com/arstechnica/software', 'software'),
         'http://feeds.arstechnica.com/arstechnica/index',
     ]
-    parser_config = {'first-p': True}
+
+    def format_body(self, body):
+        p = body.find('p')
+        if p is not None:
+            body = p
+        return body.get_text().strip()

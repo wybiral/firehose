@@ -10,4 +10,9 @@ class Source(RSSSource):
         ('https://api.axios.com/feed/world/', 'world'),
         'https://api.axios.com/feed/',
     ]
-    parser_config = {'first-p': True}
+
+    def format_body(self, body):
+        p = body.find('p')
+        if p is not None:
+            body = p
+        return body.get_text().strip()

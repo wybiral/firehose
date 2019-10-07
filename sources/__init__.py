@@ -23,13 +23,14 @@ class RSSSource(BaseSource):
     name = ''
     url = ''
     feeds = []
-    parser_config = {}
     cache_size = 500
 
     def __init__(self, module):
         self.logfile = 'logs/%s.txt' % module
         self.cache = Cache(size=self.cache_size)
-        self.parser = RSSParser(config=self.parser_config)
+        self.parser = RSSParser()
+        if hasattr(self, 'format_body'):
+            self.parser.format_body = self.format_body
         self.cache.load(self.logfile)
 
     def map(self, x):

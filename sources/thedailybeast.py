@@ -9,7 +9,12 @@ class Source(RSSSource):
         ('https://feeds.thedailybeast.com/rss/world', 'world'),
         'https://feeds.thedailybeast.com/rss/articles',
     ]
-    parser_config = {'first-p': True}
+
+    def format_body(self, body):
+        p = body.find('p')
+        if p is not None:
+            body = p
+        return body.get_text().strip()
 
     def map(self, x):
         parts = x['url'].split('?', 1)

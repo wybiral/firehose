@@ -12,4 +12,9 @@ class Source(RSSSource):
         ('https://www.theguardian.com/world/rss', 'world'),
         'https://www.theguardian.com/uk/rss',
     ]
-    parser_config = {'first-p': True}
+
+    def format_body(self, body):
+        p = body.find('p')
+        if p is not None:
+            body = p
+        return body.get_text().strip()

@@ -10,4 +10,9 @@ class Source(RSSSource):
         ('https://abcnews.go.com/abcnews/internationalheadlines', 'world'),
         'https://abcnews.go.com/abcnews/topstories',
     ]
-    parser_config = {'first-p': True}
+
+    def format_body(self, body):
+        p = body.find('p')
+        if p is not None:
+            body = p
+        return body.get_text().strip()

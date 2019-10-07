@@ -10,4 +10,9 @@ class Source(RSSSource):
         ('https://www.vox.com/rss/world/index.xml', 'world'),
         'https://www.vox.com/rss/index.xml',
     ]
-    parser_config = {'first-p': True}
+
+    def format_body(self, body):
+        p = body.find('p')
+        if p is not None:
+            body = p
+        return body.get_text().strip()

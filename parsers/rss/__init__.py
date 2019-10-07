@@ -5,17 +5,11 @@ import time
 
 class RSSParser:
 
-    def __init__(self, config=None):
-        if config is None:
-            config = {}
-        self.config = config
-
     def parse(self, x):
         ''' Parse feed items from x text, return item generator. '''
         # feedparser will perform a request from these strings
         if x[:3] in ('htt', 'ftp', 'fil', 'fee'):
             return None
-        first_p = self.config.get('first-p', False)
         feed = feedparser.parse(x)
         entries = feed['entries']
         for entry in reversed(entries):
@@ -29,13 +23,7 @@ class RSSParser:
             update['title'] = clean_html(entry['title'])
             body = extract_body(entry)
             body = BeautifulSoup(body, 'html.parser')
-            if first_p:
-                # 'first-p' is a config option to only take the first <p>
-                # element from the body HTML. This is pretty common.
-                p = body.find('p')
-                if p is not None:
-                    body = p
-            update['body'] = body.get_text().strip()
+            update['body'] = self.format_body(body)
             thumb = extract_thumb(entry)
             if thumb:
                 update['thumb'] = thumb
@@ -47,6 +35,9 @@ class RSSParser:
                 date = date.strftime('%Y-%m-%d %H:%M:%S')
             update['date'] = date
             yield update
+
+    def format_body(self, body):
+        return body.get_text().strip()
 
 
 def clean_html(raw):
@@ -89,8 +80,13 @@ def extract_thumb(entry):
     # no media attachment or thumbnail? look for <img> in body...
     soup = BeautifulSoup(entry['summary'], 'html.parser')
     img = soup.find('img')
+    if img is None:
+        return None
+    # filter out 1x1 tracker images
+    if img.get('width', None) == '1':
+        return None
     # Routers News has a weird image link that gets mistaken for a thumbnail
     # for now, filtering "yIl2AUoC8zA" is a hacky workaround
-    if img and 'yIl2AUoC8zA' not in img['src']:
-        return img['src']
-    return None
+    if 'yIl2AUoC8zA' in img['src']:
+        return None
+    return img['src']
