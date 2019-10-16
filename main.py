@@ -29,10 +29,7 @@ async def pump_firehose(app):
 
 async def handle(req):
     print('/')
-    results = await req.app['db'].query(count=20)
-    return aiohttp_jinja2.render_template('index.html', req, {
-        'results': json.dumps(results),
-    })
+    return aiohttp_jinja2.render_template('index.html', req, {})
 
 async def wshandle(req):
     print('/socket')
