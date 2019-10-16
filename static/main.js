@@ -26,18 +26,18 @@ function createUpdate(data) {
     info.appendChild(source);
     source.className = 'source';
     const sourceLink = document.createElement('a');
-    sourceLink.href = data.source.url;
+    sourceLink.href = data.source_url;
     sourceLink.target = '_blank';
-    let sourceName = data.source.name;
-    if (data.source.category) {
-        sourceName += ' (' + data.source.category + ')';
+    let sourceName = data.source_name;
+    if (data.category) {
+        sourceName += ' (' + data.category + ')';
     }
     sourceLink.innerText = sourceName;
     source.appendChild(sourceLink);
     const date = document.createElement('div');
     info.appendChild(date);
     date.className = 'date';
-    date.innerText = data.date.split(' ')[0];
+    date.innerText = data.published.split(' ')[0];
     const clear = document.createElement('div');
     clear.style.clear = 'both';
     header.appendChild(clear);
@@ -57,7 +57,7 @@ function connect(updates) {
         updates.appendChild(createUpdate(data));
     };
     // if WebSocket closes keep trying to connect
-    socket.onclose = evt => setTimeout(() => connect(updates), 1000);
+    socket.onclose = evt => setTimeout(() => connect(updates), 5000);
 }
 
 window.onload = () => {

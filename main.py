@@ -2,6 +2,7 @@ from aiohttp import web
 import aiohttp_jinja2
 import aiojobs
 import asyncio
+from database import SQLiteDatabase
 import importlib
 import jinja2
 import json
@@ -12,15 +13,12 @@ async def pump_firehose(app):
     ''' Spawn all stream source jobs and pump the app['queue'] stream out to
         all app['websockets']
     '''
+    db = app['db']
     queue = app['queue']
     jobs = await aiojobs.create_scheduler()
     for s in app['sources']:
-        await jobs.spawn(s.run(queue))
+        await jobs.spawn(s.run(db, queue))
     while True:
-        if len(app['websockets']) == 0:
-            # don't bother if no clients
-            await asyncio.sleep(1)
-            continue
         x = await queue.get()
         j = json.dumps(x)
         for ws in app['websockets']:
@@ -28,25 +26,35 @@ async def pump_firehose(app):
                 await ws.send_str(j)
             except:
                 pass
-        await asyncio.sleep(0.1)
 
 async def handle(req):
     print('/')
-    return aiohttp_jinja2.render_template('index.html', req, {})
+    results = await req.app['db'].query(count=20)
+    return aiohttp_jinja2.render_template('index.html', req, {
+        'results': json.dumps(results),
+    })
 
 async def wshandle(req):
     print('/socket')
     ws = web.WebSocketResponse(heartbeat=5)
     await ws.prepare(req)
     req.app['websockets'].add(ws)
-    async for msg in ws:
-        if msg.type == web.WSMsgType.close:
-            break
+    try:
+        async for msg in ws:
+            if msg.type == web.WSMsgType.close:
+                break
+    except:
+        pass
     req.app['websockets'].remove(ws)
     return ws
 
-async def start_background_tasks(app):
+async def app_startup(app):
+    db = await SQLiteDatabase.connect('firehose.db')
+    app['db'] = db
     app['firehose'] = asyncio.create_task(pump_firehose(app))
+
+async def app_cleanup(app):
+    await app['db'].close()
 
 def main():
     host = '127.0.0.1'
@@ -58,8 +66,6 @@ def main():
     # setup template env
     loader = jinja2.FileSystemLoader('templates')
     jinja_env = aiohttp_jinja2.setup(app, loader=loader)
-    # create cache log path
-    os.makedirs('logs', exist_ok=True)
     # instantiate all Source objects from sources module
     for name in os.listdir('sources'):
         if name.startswith('_'):
@@ -75,7 +81,8 @@ def main():
         web.get('/socket', wshandle),
     ])
     app.router.add_static('/static/', path='static', name='static')
-    app.on_startup.append(start_background_tasks)
+    app.on_startup.append(app_startup)
+    app.on_cleanup.append(app_cleanup)
     web.run_app(app, host=host, port=port)
     print('\nshutting down...')
 

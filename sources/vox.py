@@ -16,3 +16,9 @@ class Source(RSSSource):
         if p is not None:
             body = p
         return body.get_text().strip()
+
+    def map(self, x):
+        _, id = x['url'].split('.com/', 1)
+        id, _ = id.rsplit('/', 1)
+        x['id'] = id
+        return x

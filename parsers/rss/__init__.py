@@ -33,7 +33,7 @@ class RSSParser:
             else:
                 date = datetime.datetime.now()
                 date = date.strftime('%Y-%m-%d %H:%M:%S')
-            update['date'] = date
+            update['published'] = date
             yield update
 
     def format_body(self, body):
