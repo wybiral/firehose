@@ -39,6 +39,7 @@ class Source(BaseSource):
         a = p.find('a')
         a.extract()
         x['body'] = p.get_text()
+        x['category'] = 'politics'
         x['source_name'] = self.name
         x['source_url'] = self.url
         x['id'] = self.module + ':' + x['url']

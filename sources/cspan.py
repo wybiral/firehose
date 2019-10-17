@@ -41,6 +41,7 @@ class Source(BaseSource):
             x['body'] = body_p.get_text()
         thumb_a = video.find('a', {'class': 'thumb'})
         x['thumb'] = thumb_a.find_all('img')[0]['src']
+        x['category'] = 'politics'
         x['source_name'] = self.name
         x['source_url'] = self.url
         x['id'] = self.module + ':' + x['url']

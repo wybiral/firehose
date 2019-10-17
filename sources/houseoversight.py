@@ -45,6 +45,7 @@ class Source(BaseSource):
             x['body'] = d.get_text().strip()
         else:
             x['body'] = ''
+        x['category'] = 'politics'
         x['source_name'] = self.name
         x['source_url'] = self.url
         x['id'] = self.module + ':' + x['url']

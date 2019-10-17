@@ -37,6 +37,7 @@ class Source(BaseSource):
         date = datetime.strptime(date, '%m/%d/%y')
         x['published'] = date.strftime('%Y-%m-%d')
         x['body'] = ''
+        x['category'] = 'politics'
         x['source_name'] = self.name
         x['source_url'] = self.url
         x['id'] = self.module + ':' + x['url']

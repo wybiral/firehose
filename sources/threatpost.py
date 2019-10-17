@@ -4,5 +4,5 @@ class Source(RSSSource):
     name = 'Threatpost'
     url = 'https://threatpost.com/'
     feeds = [
-        'https://threatpost.com/feed/',
+        ('https://threatpost.com/feed/', 'technology'),
     ]
