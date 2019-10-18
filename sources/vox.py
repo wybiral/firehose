@@ -19,6 +19,7 @@ class Source(RSSSource):
 
     def map(self, x):
         _, id = x['url'].split('.com/', 1)
-        id, _ = id.rsplit('/', 1)
+        if '/' in id:
+            id, _ = id.rsplit('/', 1)
         x['id'] = id
         return x
