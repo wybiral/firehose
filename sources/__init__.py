@@ -12,9 +12,7 @@ class BaseSource:
         while True:
             try:
                 await self.update(db, queue)
-            except aiohttp.ClientConnectorError:
-                pass
-            except aiohttp.ClientOSError:
+            except aiohttp.ClientError:
                 pass
             await asyncio.sleep(interval)
 

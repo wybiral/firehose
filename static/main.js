@@ -50,7 +50,7 @@ function createUpdate(data) {
 }
 
 function connect(updates) {
-    let url = 'ws://localhost:8000/socket';
+    let url = 'ws://' + window.location.host + '/socket';
     socket = new WebSocket(url);
     socket.onmessage = evt => {
         const data = JSON.parse(evt.data);
