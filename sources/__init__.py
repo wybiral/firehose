@@ -14,6 +14,8 @@ class BaseSource:
                 await self.update(db, queue)
             except aiohttp.ClientError:
                 pass
+            except asyncio.TimeoutError:
+                pass
             await asyncio.sleep(interval)
 
     async def update(self, db, queue):
