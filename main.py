@@ -7,7 +7,6 @@ import importlib
 import jinja2
 import json
 import os
-from sources.axios import Source
 
 async def pump_firehose(app):
     ''' Spawn all stream source jobs and pump the app['queue'] stream out to
