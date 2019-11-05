@@ -10,3 +10,8 @@ class Source(RSSSource):
         ('https://www.cbsnews.com/latest/rss/world', 'world'),
         'https://www.cbsnews.com/latest/rss/main',
     ]
+
+    def map(self, x):
+        if x['url'].startswith('https://www.cbsnews.com/video/'):
+            return None
+        return x
