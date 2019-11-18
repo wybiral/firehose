@@ -29,6 +29,8 @@ class Source(BaseSource):
                     text = await r.text()
                     soup = BeautifulSoup(text, 'html.parser')
                     feed = soup.find('article', {'class': 'feed'})
+                    if feed is None:
+                        continue
                     articles = feed.find_all('div', recursive=False)
                     for article in reversed(articles):
                         await self._update_article(db, queue, category, article)
