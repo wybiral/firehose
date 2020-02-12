@@ -13,6 +13,11 @@ class Source(RSSSource):
         'https://www.theguardian.com/uk/rss',
     ]
 
+    def map(self, x):
+        if x['url'].startswith('https://www.theguardian.com/football/'):
+            return None
+        return x
+
     def format_body(self, body):
         p = body.find('p')
         if p is not None:
