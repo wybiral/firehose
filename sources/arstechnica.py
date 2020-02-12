@@ -12,6 +12,10 @@ class Source(RSSSource):
         'http://feeds.arstechnica.com/arstechnica/index',
     ]
 
+    def map(self, x):
+        _, x['id'] = x['url'].rsplit('?p=', 1)
+        return x
+
     def format_body(self, body):
         p = body.find('p')
         if p is not None:
