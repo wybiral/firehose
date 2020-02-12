@@ -15,6 +15,8 @@ class Source(RSSSource):
     def map(self, x):
         if x['url'].startswith('https://www.washingtonpost.com/opinions/'):
             return None
+        if x['url'].startswith('https://www.washingtonpost.com/sports/'):
+            return None
         return x
 
     def format_body(self, body):
