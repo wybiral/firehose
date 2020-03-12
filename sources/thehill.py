@@ -9,3 +9,9 @@ class Source(RSSSource):
         ('https://thehill.com/taxonomy/term/1130/feed', 'politics'),
         ('https://thehill.com/rss/syndicator/19109', 'politics'),
     ]
+
+    def map(self, x):
+        if 'id' in x:
+            if ' at ' in x['id']:
+                x['id'], _ = x['id'].split(' at ', 1)
+        return x
