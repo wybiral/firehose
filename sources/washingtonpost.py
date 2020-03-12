@@ -17,6 +17,9 @@ class Source(RSSSource):
             return None
         if x['url'].startswith('https://www.washingtonpost.com/sports/'):
             return None
+        parts = x['url'].split('?')
+        x['url'] = parts[0]
+        x['id'] = x['url']
         return x
 
     def format_body(self, body):
