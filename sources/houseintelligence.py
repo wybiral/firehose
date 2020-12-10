@@ -19,12 +19,12 @@ class Source(BaseSource):
             async with s.get(url) as r:
                 text = await r.text()
                 soup = BeautifulSoup(text, 'html.parser')
-                articles = soup.find_all('article')
+                articles = soup.find_all('article', {'class': 'newsblocker'})
                 for article in reversed(articles):
                     await self._update_article(db, queue, article)
 
     async def _update_article(self, db, queue, article):
-        h3 = article.find('h3', {'class': 'newsie-titler'})
+        h3 = article.find('h2', {'class': 'newsie-titler'})
         a = h3.find('a')
         url = a['href']
         x = {}
@@ -35,10 +35,13 @@ class Source(BaseSource):
         date = datetime.strptime(date, '%B %d, %Y')
         x['published'] = date.strftime('%Y-%m-%d')
         div = article.find('div', {'class': 'newsie-content'})
-        p = div.find('p')
-        a = p.find('a')
-        a.extract()
-        x['body'] = p.get_text()
+        if div:
+            p = div.find('p')
+            if p:
+                a = p.find('a')
+                if a:
+                    a.extract()
+                x['body'] = p.get_text()
         x['category'] = 'politics'
         x['source_name'] = self.name
         x['source_url'] = self.url
