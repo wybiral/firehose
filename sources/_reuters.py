@@ -1,3 +1,7 @@
+# NOTE: Their RSS feeds seem to be offline.
+# Might need to switch to their "wire API".
+# See: https://github.com/wybiral/firehose/issues/8
+
 from sources import RSSSource
 
 class Source(RSSSource):
