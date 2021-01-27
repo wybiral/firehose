@@ -21,11 +21,18 @@ a:hover {
     text-decoration: underline;
 }
 
+body > h1 {
+    max-width: 600px;
+    margin: 0.25em auto;
+    font-weight: 700;
+    font-size: 150%;
+    opacity: 0.75;
+    text-align: center;
+}
+
 main {
     max-width: 600px;
     margin: 0.5em auto;
-    display: flex;
-    flex-direction: column-reverse;
 }
 
 article {
@@ -40,7 +47,7 @@ article {
 }
 
 article + article {
-    margin-bottom: 0.5em;
+    margin-top: 0.5em;
 }
 
 article header {

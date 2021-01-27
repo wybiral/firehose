@@ -1,0 +1,46 @@
+<html>
+    <head>
+        <title>Firehose: {{ day }}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="/static/theme.css">
+        <link rel="icon" type="image/png" href="/static/favicon.png">
+    </head>
+    <body>
+        <h1>{{ day }}</h1>
+        <main>
+        {% if not items %}
+            <div>No items found for this day.</div>
+        {% else %}
+            {% for item in items %}
+            <article>
+                <header>
+                    {% if item.thumb %}
+                    <div class="thumb">
+                        <img src="{{ item.thumb }}">
+                    </div>
+                    {% endif %}
+                    <div class="info">
+                        <a class="title" href="{{ item.url }}" target="_blank">
+                            {{ item.title }}
+                        </a>
+                        <div class="source">
+                            <a href="{{ item.source_url }}">
+                                {{ item.source_name }}
+                                {% if item.category %}
+                                    ({{ item.category }})
+                                {% endif %}
+                            </a>
+                        </div>
+                        <div class="date">
+                            {{ item.published }}
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                </header>
+                <p>{{ item.body }}</p>
+            </article>
+            {% endfor %}
+        {% endif %}
+        </main>
+    </body>
+</html>

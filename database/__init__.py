@@ -30,7 +30,7 @@ class SQLiteDatabase:
             );
         ''')
         await conn.execute('''
-            create index if not exists idxProcessed on Item (processed)
+            create index if not exists idxPublished on Item (published)
         ''')
         await conn.execute('''
             create index if not exists idxCategory on Item (category)
@@ -73,3 +73,26 @@ class SQLiteDatabase:
         except aiosqlite.IntegrityError:
             return False
         return True
+
+    async def get_day(self, published):
+        cursor = await self._conn.execute('''
+            select
+                Item.id,
+                Item.title,
+                Item.url,
+                Item.body,
+                Item.thumb,
+                Item.category,
+                Item.published,
+                Item.processed,
+                Item.source_name,
+                Item.source_url
+            from Item
+            where Item.published = ?
+            order by Item.processed desc
+        ''', (published,))
+        names = [x[0] for x in cursor.description]
+        out = []
+        async for row in cursor:
+            out.append(dict(zip(names, row)))
+        return out

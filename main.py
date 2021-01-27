@@ -7,6 +7,7 @@ import importlib
 import jinja2
 import json
 import os
+import datetime
 
 async def pump_firehose(app):
     ''' Spawn all stream source jobs and pump the app['queue'] stream out to
@@ -44,6 +45,20 @@ async def wshandle(req):
     req.app['websockets'].remove(ws)
     return ws
 
+async def dailyhandle(req):
+    day = req.match_info.get('day', None)
+    print('/daily/' + str(day))
+    db = req.app['db']
+    items = await db.get_day(published=day)
+    return aiohttp_jinja2.render_template('daily.html', req, {
+        'day': day,
+        'items': items,
+    })
+
+async def todayhandle(req):
+    day = datetime.datetime.now().strftime('%Y-%m-%d')
+    return web.HTTPFound(location='/daily/' + day)
+
 async def app_startup(app):
     db = await SQLiteDatabase.connect('firehose.db')
     app['db'] = db
@@ -74,6 +89,8 @@ def main():
     # web app routes
     app.add_routes([
         web.get('/', handle),
+        web.get('/daily', todayhandle),
+        web.get('/daily/{day}', dailyhandle),
         web.get('/socket', wshandle),
     ])
     app.router.add_static('/static/', path='static', name='static')
