@@ -18,8 +18,8 @@ class Source(BaseSource):
             async with s.get(url) as r:
                 text = await r.text()
                 soup = BeautifulSoup(text, 'html.parser')
-                div = soup.find('div', {'class': 'media-list'})
-                articles = div.find_all('article', {'class': 'media-wrapper'})
+                div = soup.find('div', {'class': 'list-group list-group-flush'})
+                articles = div.find_all('article')
                 for article in reversed(articles):
                     await self._update_article(db, queue, article)
 
@@ -27,18 +27,20 @@ class Source(BaseSource):
         x = {}
         a = article.find('a')
         x['url'] = a['href']
-        x['title'] = a.find('h5').get_text()
-        li = a.find('li', {'class': 'date breadcrumb-item'})
-        date = datetime.strptime(li.get_text().strip(), '%d %B %Y')
-        date = date.strftime('%Y-%m-%d')
-        x['published'] = date
-        p = a.find('p', {'class': 'subtitle'})
-        x['body'] = p.get_text()
-        img = a.find('img')
-        if img is not None:
-            srcset = img['data-lazy-srcset']
-            srcset = srcset.split('w,')
-            x['thumb'] = srcset[1].split(' ')[0]
+        div = article.find('div', {'class': 'media-body'})
+        x['title'] = div.find('span', {'class': 'title h5'}).get_text()
+        # they got rid of pub date, using today
+        # (may consider using date from thumbnail URL)
+        date = datetime.now()
+        x['published'] = date.strftime('%Y-%m-%d')
+        x['body'] = div.find('span', {'class': 'subtitle d-flex'}).get_text()
+        figure = article.find('figure')
+        if figure is not None:
+            img = figure.find('img')
+            if img is not None:
+                srcset = img['data-lazy-srcset']
+                srcset = srcset.split('w,')
+                x['thumb'] = srcset[1].split(' ')[0]
         x['source_name'] = self.name
         x['source_url'] = self.url
         x['id'] = self.module + ':' + x['url']
