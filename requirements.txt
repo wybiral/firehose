@@ -1,4 +1,4 @@
-aiohttp==3.6.0
+aiohttp==3.7.4
 aiohttp-jinja2==1.1.2
 aiojobs==0.2.2
 aiosqlite==0.10.0
