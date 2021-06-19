@@ -1,7 +1,7 @@
-aiohttp==3.6.0
-aiohttp-jinja2==1.1.2
-aiojobs==0.2.2
-aiosqlite==0.10.0
-bs4==4.7.1
-feedparser==5.2.1
-Jinja2==2.10.1
+aiohttp>=3.7.4
+aiohttp-jinja2>=1.4.2
+aiojobs>=0.3.0
+aiosqlite>=0.17.0
+bs4>=0.0.1
+feedparser>=6.0.6
+Jinja2>=3.0.1
