@@ -38,9 +38,7 @@ class Source(BaseSource):
         if figure is not None:
             img = figure.find('img')
             if img is not None:
-                srcset = img['data-lazy-srcset']
-                srcset = srcset.split('w,')
-                x['thumb'] = srcset[1].split(' ')[0]
+                x['thumb'] = img['src']
         x['source_name'] = self.name
         x['source_url'] = self.url
         x['id'] = self.module + ':' + x['url']
