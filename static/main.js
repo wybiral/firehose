@@ -50,14 +50,11 @@ function createUpdate(data) {
 }
 
 function connect(updates) {
-    let url = 'ws://' + window.location.host + '/socket';
-    socket = new WebSocket(url);
-    socket.onmessage = evt => {
+    const stream = new EventSource('/stream');
+    stream.addEventListener('message', evt => {
         const data = JSON.parse(evt.data);
         updates.insertBefore(createUpdate(data), updates.firstChild);
-    };
-    // if WebSocket closes keep trying to connect
-    socket.onclose = evt => setTimeout(() => connect(updates), 5000);
+    });
 }
 
 window.onload = () => {

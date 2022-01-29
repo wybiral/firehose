@@ -1,5 +1,6 @@
 from aiohttp import web
 import aiohttp_jinja2
+from aiohttp_sse import sse_response
 import aiojobs
 import asyncio
 from database import SQLiteDatabase
@@ -11,7 +12,7 @@ import datetime
 
 async def pump_firehose(app):
     ''' Spawn all stream source jobs and pump the app['queue'] stream out to
-        all app['websockets']
+        all Server-Sent Event clients.
     '''
     db = app['db']
     queue = app['queue']
@@ -21,9 +22,9 @@ async def pump_firehose(app):
     while True:
         x = await queue.get()
         j = json.dumps(x)
-        for ws in app['websockets']:
+        for client in app['clients']:
             try:
-                await ws.send_str(j)
+                await client.put(j)
             except:
                 pass
 
@@ -31,19 +32,20 @@ async def handle(req):
     print('/')
     return aiohttp_jinja2.render_template('index.html', req, {})
 
-async def wshandle(req):
-    print('/socket')
-    ws = web.WebSocketResponse(heartbeat=5)
-    await ws.prepare(req)
-    req.app['websockets'].add(ws)
-    try:
-        async for msg in ws:
-            if msg.type == web.WSMsgType.close:
-                break
-    except:
-        pass
-    req.app['websockets'].remove(ws)
-    return ws
+async def streamhandle(req):
+    app = req.app
+    print('/stream')
+    async with sse_response(req) as resp:
+        q = asyncio.Queue()
+        app['clients'].add(q)
+        try:
+            while not resp.task.done():
+                data = await q.get()
+                await resp.send(data)
+                q.task_done()
+        finally:
+            app['clients'].remove(q)
+    return resp
 
 async def dailyhandle(req):
     day = req.match_info.get('day', None)
@@ -73,7 +75,7 @@ def main():
     app = web.Application()
     app['queue'] = asyncio.Queue(maxsize=10)
     app['sources'] = []
-    app['websockets'] = set()
+    app['clients'] = set()
     # setup template env
     loader = jinja2.FileSystemLoader('templates')
     jinja_env = aiohttp_jinja2.setup(app, loader=loader)
@@ -91,7 +93,7 @@ def main():
         web.get('/', handle),
         web.get('/daily', todayhandle),
         web.get('/daily/{day}', dailyhandle),
-        web.get('/socket', wshandle),
+        web.get('/stream', streamhandle),
     ])
     app.router.add_static('/static/', path='static', name='static')
     app.on_startup.append(app_startup)

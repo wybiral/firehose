@@ -1,5 +1,6 @@
 aiohttp>=3.7.4
 aiohttp-jinja2>=1.4.2
+aiohttp-sse>=2.1.0
 aiojobs>=0.3.0
 aiosqlite>=0.17.0
 bs4>=0.0.1
