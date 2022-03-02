@@ -12,8 +12,9 @@
 }
 
 body {
+    color: #fff;
     font-family: Helvetica, Arial, sans-serif;
-    background: #ddd;
+    background: #1e1e1e;
     padding: 0.5em;
 }
 
@@ -36,7 +37,7 @@ main {
 }
 
 article {
-    background: #fff;
+    background: #282a2e;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.25);
     padding: 0.5em;
     animation: fadein 1s;
@@ -72,11 +73,12 @@ article header .info {
 }
 
 article a.title {
+    color: #66d9ef;
     font-size: 120%;
 }
 
 article .source {
-    color: #555;
+    color: #aaa;
 }
 
 article .date {
@@ -85,5 +87,5 @@ article .date {
 
 article p {
     margin-top: 0.5em;
-    color: #111;
+    color: #fff;
 }
