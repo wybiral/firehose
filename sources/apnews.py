@@ -47,7 +47,7 @@ class Source(BaseSource):
         a = headline.find('a')
         if a is None:
             a = article.find('a')
-        h3 = headline.find('h3')
+        h3 = headline.find('h2')
         x['id'] = self.module + ':' + a['href']
         x['url'] = 'https://apnews.com' + a['href']
         x['title'] = h3.get_text()
